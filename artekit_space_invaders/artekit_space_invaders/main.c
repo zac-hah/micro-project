@@ -6,6 +6,7 @@
  * Edited by Radu Ormsby and Zac Hah
  
  * Waah 
+ * 1+1 = 2
  
 ### main.c
  
