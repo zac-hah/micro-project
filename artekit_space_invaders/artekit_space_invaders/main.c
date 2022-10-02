@@ -3,6 +3,9 @@
  * Copyright (C) 2012 Artekit Italy
  * http://www.artekit.eu
  * Written by Ruben H. Meleca
+ * Edited by Radu and zaccy boi
+ 
+ *Hello 
  
 ### main.c
  
