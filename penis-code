@@ -1,0 +1,114 @@
+#include <TM4C129.h> 
+#include "Lib4.h"
+
+#define MINT 96
+#define MFRAC 0
+#define N 4
+#define Q 0
+
+#define PSYSDIV 3
+
+// Used to set memtim0 for flash and eeprom
+// These are configured for 100 .. 120 MHz CPU frequency (p277 in the datasheet)
+#define FBCHT    0x6
+#define EBCHT    0x6
+#define FBCE    0
+#define EBCE    0
+#define FWS    0x5
+#define EWS    0x5
+
+void setSysClk(uint32_t sysclk)
+{
+	SYSCTL->MOSCCTL |= 1<<4;
+	SYSCTL->MOSCCTL &= ~(1<<2);
+	SYSCTL->MOSCCTL &= ~1<<3;
+	
+	while(!(SYSCTL->RIS & (1<<8))){
+	}
+	
+	SYSCTL->RSCLKCFG &= ~(0xff << 20);
+	SYSCTL->RSCLKCFG |= (0x3 << 20);
+	SYSCTL->RSCLKCFG |= (0x3 << 24);
+	
+	SYSCTL->PLLFREQ0 = MINT;
+	SYSCTL->PLLFREQ1 = (Q<<8) | N;
+	SYSCTL->PLLFREQ0 |= 1<<23;
+	
+	SYSCTL->MEMTIM0 = (EBCHT<<22) | (EBCE<<21) | (EWS << 16) | (FBCHT<<6) | FBCE<<5 | FWS;
+	SYSCTL->MEMTIM0 |= 1<<4 | 1<<20;
+	
+	while((SYSCTL->PLLSTAT & 0x01) != 0x01) {
+	}
+	
+	uint32_t psysdiv = (480 / sysclk)-1;
+	SYSCTL->RSCLKCFG |= 1<<31 | 1<<30 | 1<<28 | psysdiv;
+}
+
+// SysTick Setup
+/*
+	1. Clear ENABLE to stop counter (NVIC_ST_CTRL) (SYSTICK->CTRL)
+	2. Specify RELOAD value (NVIC_ST_RELOAD) (SYSTICK->RELOAD)
+	3. Clear counter via NVIC_ST_CURRENT (NVIC->CURRENT)
+	4. Set desired mode: set CLK_SRC =1 for use of internal clock (16MHz),
+	    set INTEN = 1 to enable interrupts (0 to disable)via NVIC_ST_CTRL (SYSTICK->CTRL). 
+			If interrupts used, set priority in SYS_PRI3.
+	5. Set ENABLE so counter will run (NVIC_ST_CTRL) (SYSTICK->CTRL).
+*/
+
+void setup_PortN()
+{
+	// Setup configuration for Port N Pin 0 (LED D2)
+	SYSCTL->RCGCGPIO |= (1<<12) ;
+	while((SYSCTL->PRGPIO & (1<<12)) != (1<<12)) {} ;
+	
+	GPION->DIR |= (1<<0) ;
+	GPION->DEN |= (1<<0) ;
+	GPION->AMSEL &= ~(1<<0) ;
+	GPION->AFSEL &= ~(1<<0) ;
+	GPION->DATA |= (1<<0) ;     // Turn LED D2 on initially
+		
+	// Setup SysTick 
+	SysTick->CTRL = 0 ; // Clear the SysTick Control
+	SysTick->LOAD = 0x2 ; // Set RELOAD value to 15999 (dec) = 0x3E7F (hex)
+	SysTick->VAL = 0 ; // Clear the SysTick Current
+	
+	SysTick->CTRL |= ( (1<<0) | (1<<1) | (1<<2) ) ;
+		
+	__enable_irq() ; // Enable global interrupts
+}
+
+void SysTick_Handler(void) 
+{
+	static int count = 0 ;
+	if (count < 1) 
+	{
+		 count++;
+	}
+	else 
+	{
+		GPION->DATA ^= (1<<0) ;
+		count = 0 ;
+	}
+}
+
+
+// main function
+int main(void) {
+	setSysClk(120);
+	serialBegin();
+	serialWriteString("115200,N,8,1\r\n");  // Connection details with carriage return | line feed
+
+	// Configure GPIO and SysTick settings
+	setup_PortN() ;
+
+	int count = 0 ;
+
+	while ( 1 ) 
+	{
+		
+	}  // loop for ever
+	
+	
+	
+	return (0) ;
+}
