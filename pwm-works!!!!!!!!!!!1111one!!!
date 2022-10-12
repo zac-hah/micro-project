@@ -1,0 +1,70 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <stdbool.h>
+  
+#include "TM4C1294NCPDT.h"
+// #include "MyDefines.h"  // Your Definition Header File
+  
+void Setup_PWM(void);
+void Setup_GPIO(void);
+
+
+//------------------------------------------------------------------------------
+void Setup_PWM(void)
+{
+		// 1. Enable Clock for PWM Module
+    SYSCTL->RCGCPWM |= 0x01;
+    while((SYSCTL->PRPWM & 0x01) != 0x01 ){
+		}
+    // 2. Enable and Setup Clock Divider for PWM Timer
+    PWM0->CC  = (1 << 8);           // CC[8]:USEPWMDIV
+    PWM0->CC &= ~0x7;               // CC[2:0]=000 PWMDIV
+    PWM0->CC |= (0x0);              // CC[2:0]=0x2 divider = /8
+    // 3. Disable PWM Generator and Setup the Timer counting mode
+    PWM0->_0_CTL = 0x00;            // Disable PWM Generator, and set to count down mode
+    // 4. Configure LOAD (Period), CMP (Duty), GEN (PWM Mode) values
+    PWM0->_0_LOAD = 10000;          // Setup the period of the PWM signal
+    PWM0->_0_CMPA = 7;     // Setup the initial duty cycle
+    PWM0->_0_GENA = (0x02 << 6 ) | (0x03 <<2); // ACTCMPAD=ActLow ACTLOAD=ActHigh
+    // 5. Enable PWM Generator
+    PWM0->_0_CTL |= 0x01;           // Enable PWM Generator
+    // 6. Enable PWM Output
+    PWM0->ENABLE = 0x01;            // Enable PWM0
+}
+
+void Setup_GPIO(void)
+{
+    // GPIO Initialization and Configuration
+    // 1. Enable Clock to the GPIO Modules (SYSCTL->RCGCGPIO)
+    SYSCTL->RCGCGPIO |= (1<<5);
+    // allow time for clock to stabilize (SYSCTL->PRGPIO)
+    while((SYSCTL->PRGPIO & (1<<5)) != (1<<5)){
+		}
+		
+    // 2. Unlock GPIO only PD7, PF0 on TM4C123G; PD7, PE7 on TM4C1294 (GPIO->LOCK and GPIO->CR)
+    // 3. Set Analog Mode Select bits for each Port (GPIO->AMSEL  0=digital, 1=analog)
+		GPIOF_AHB->AMSEL = 0;
+    // 4. Set Port Control Register for each Port (GPIO->PCTL, check the PCTL table)
+		GPIOF_AHB->PCTL |= 0x6;
+    // 5. Set Alternate Function Select bits for each Port (GPIO->AFSEL  0=regular I/O, 1=PCTL peripheral)
+    GPIOF_AHB->AFSEL = 1<<0;
+		// 6. Set Output pins for each Port (Direction of the Pins: GPIO->DIR  0=input, 1=output)
+    GPIOF_AHB->DIR |= 1<<0;
+		// 7. Set PUR bits (internal Pull-Up Resistor), PDR (Pull-Down Resistor), ODR (Open Drain) for each Port (0: disable, 1=enable)
+    //GPIOF_AHB->ODR = 0;
+		//GPIOF_AHB->PDR |= 1<<0;
+		// 8. Set Digital ENable register on all GPIO pins (GPIO->DEN 0=disable, 1=enable)
+		GPIOF_AHB->DEN |= 1<<0;
+}
+
+int main()
+{
+    Setup_PWM();
+    Setup_GPIO();
+ 
+    while(1) {
+        // Place your application code here
+  
+    }
+}
