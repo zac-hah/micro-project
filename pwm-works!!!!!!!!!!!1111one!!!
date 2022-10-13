@@ -8,6 +8,7 @@
   
 void Setup_PWM(void);
 void Setup_GPIO(void);
+void Setup_DAC(void);
 
 
 //------------------------------------------------------------------------------
