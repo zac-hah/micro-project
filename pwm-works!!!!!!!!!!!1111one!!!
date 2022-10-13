@@ -8,10 +8,50 @@
   
 void Setup_PWM(void);
 void Setup_GPIO(void);
-void Setup_DAC(void);
+//void Setup_ADC(void);
+//void Setup_ADC_SS3_CH9();
+//void Setup_UART0(void);
+//void Setup_1294_80MHz(); // Setup SystemClock to 80MHz 
 
 
 //------------------------------------------------------------------------------
+
+/*
+void Setup_ADC(void){
+	Setup_1294_80MHz();
+	Setup_ADC_SS3_CH9(void);
+	Setup_UART0();
+	
+		SYSCTL->RCGCGPIO |= (1<<0);
+		while((SYSCTL->PRGPIO & (1<<0)) != (1<<0)){}
+		
+	
+	
+	sprintf(str, "EE-3450: ADC Test \n\r");
+	UART_PrintString(str);
+	while(1){
+		// Initiate SS3
+		ADC0->PSSI = (1<<8);
+		DelayMs(100);
+		// Waiting for conversion done
+		while ((ADC0->RIS & (1<<8) != (1<<8)){};
+		result = ADC0->SSFIF03 & oxFFF; //read 12-bit result
+		ADC0->ISC = (1<<8);  // Acknowledge Completion
+		sprintf(str, "ADC result = %d \n\r", result);
+		UART_PrintString(str);
+		DelayMs(100);
+	}
+	
+}
+*/
+
+void Setup_UART0(void){
+
+}
+
+void Setup_ADC_SS3_CH9();
+
+
 void Setup_PWM(void)
 {
 		// 1. Enable Clock for PWM Module
@@ -34,15 +74,15 @@ void Setup_PWM(void)
     PWM0->ENABLE = 0x01;            // Enable PWM0
 }
 
+// Which pins are you setting in the GPIO?
 void Setup_GPIO(void)
-{
+{ 
     // GPIO Initialization and Configuration
     // 1. Enable Clock to the GPIO Modules (SYSCTL->RCGCGPIO)
-    SYSCTL->RCGCGPIO |= (1<<5);
+    SYSCTL->RCGCGPIO |= (1<<0); //? Shouldn't it be (1<<0) 
     // allow time for clock to stabilize (SYSCTL->PRGPIO)
-    while((SYSCTL->PRGPIO & (1<<5)) != (1<<5)){
+    while((SYSCTL->PRGPIO & (1<<0)) != (1<<0)){  //? Shouldn't it be (1<<0) 
 		}
-		
     // 2. Unlock GPIO only PD7, PF0 on TM4C123G; PD7, PE7 on TM4C1294 (GPIO->LOCK and GPIO->CR)
     // 3. Set Analog Mode Select bits for each Port (GPIO->AMSEL  0=digital, 1=analog)
 		GPIOF_AHB->AMSEL = 0;
@@ -57,6 +97,8 @@ void Setup_GPIO(void)
 		//GPIOF_AHB->PDR |= 1<<0;
 		// 8. Set Digital ENable register on all GPIO pins (GPIO->DEN 0=disable, 1=enable)
 		GPIOF_AHB->DEN |= 1<<0;
+		
+
 }
 
 int main()
