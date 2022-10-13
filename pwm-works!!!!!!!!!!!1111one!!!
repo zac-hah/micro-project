@@ -15,18 +15,48 @@ void Setup_GPIO(void);
 
 
 //------------------------------------------------------------------------------
+void DelayMS(int z){
+	volatile int i, j;
+	for (i = 0; i < z; i++){
+		for (j = 0; j < 3180; j++){
+		}
+	}
+}
+
 
 /*
 void Setup_ADC(void){
 	Setup_1294_80MHz();
 	Setup_ADC_SS3_CH9(void);
 	Setup_UART0();
-		//Configuring for GPIOD[7], Port D, Pin 7 
+		//Enabling GPIOA[0][1] for UART, PE[4] for ADC
+		//Enable Clock 
 		SYSCTL->RCGCGPIO |= (1<<0);
-		while((SYSCTL->PRGPIO & (1<<0)) != (1<<0)){}
-		GPIOD->DEN |= (1<<7);
-		GPIOD->AMSEL
+		while((SYSCTL->PRGPIO & (1<<0)) != (1<<0)){} // Clock Stabilize
+		// Enable Analog 
+		GPIOE->AMSEL |= (1<<4);
+		//Conig PCTL to select GPIO???
+		GPIOA->PCTL |= 0x00000011;
+		GPIOE->PCTL |= 0x00000011;
+		//enable AFSEL bits to 1 for Port A[1,0] and PortE[4]
+		GPIOA->AFSEL |= ((1<<0) | (1<<1)); 
+		GPIOE->AFSEL |= (1<<4);
 		
+		//Set DIR to 0 for input, 1 for output 
+		GPIOA->DIR |=
+		
+		//Set PUE bits to 1 to enable internal pull-up
+		
+		//Set DEN bits to 1 to enable digital data pins, write 0 to disable digital function 
+		
+		
+		
+		/*
+		GPIOA->DEN |= ( (1<<0) | (1<<1) ) ;
+		GPIOA->AFSEL |= ( (1<<0) | (1<<1) ) ;
+		GPIOA->PCTL |= 0x00000011 ;
+		*/
+
 	// Configure Pins PA0 and PA1
 	GPIOA->DEN |= ( (1<<0) | (1<<1) ) ;
 	GPIOA->AFSEL |= ( (1<<0) | (1<<1) ) ;
