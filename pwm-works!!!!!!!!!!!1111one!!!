@@ -21,9 +21,16 @@ void Setup_ADC(void){
 	Setup_1294_80MHz();
 	Setup_ADC_SS3_CH9(void);
 	Setup_UART0();
-	
+		//Configuring for GPIOD[7], Port D, Pin 7 
 		SYSCTL->RCGCGPIO |= (1<<0);
 		while((SYSCTL->PRGPIO & (1<<0)) != (1<<0)){}
+		GPIOD->DEN |= (1<<7);
+		GPIOD->AMSEL
+		
+	// Configure Pins PA0 and PA1
+	GPIOA->DEN |= ( (1<<0) | (1<<1) ) ;
+	GPIOA->AFSEL |= ( (1<<0) | (1<<1) ) ;
+	GPIOA->PCTL |= 0x00000011 ;
 		
 	
 	
@@ -79,9 +86,9 @@ void Setup_GPIO(void)
 { 
     // GPIO Initialization and Configuration
     // 1. Enable Clock to the GPIO Modules (SYSCTL->RCGCGPIO)
-    SYSCTL->RCGCGPIO |= (1<<0); //? Shouldn't it be (1<<0) 
+    SYSCTL->RCGCGPIO |= (1<<5); //
     // allow time for clock to stabilize (SYSCTL->PRGPIO)
-    while((SYSCTL->PRGPIO & (1<<0)) != (1<<0)){  //? Shouldn't it be (1<<0) 
+    while((SYSCTL->PRGPIO & (1<<5)) != (1<<5)){  //
 		}
     // 2. Unlock GPIO only PD7, PF0 on TM4C123G; PD7, PE7 on TM4C1294 (GPIO->LOCK and GPIO->CR)
     // 3. Set Analog Mode Select bits for each Port (GPIO->AMSEL  0=digital, 1=analog)
