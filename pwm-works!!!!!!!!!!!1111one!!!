@@ -14,6 +14,8 @@ void Setup_GPIO(void);
 //void Setup_1294_80MHz(); // Setup SystemClock to 80MHz 
 
 
+uint16_t voltage = 0; //voltage we set the sampling at 
+
 //------------------------------------------------------------------------------
 void DelayMS(int z){
 	volatile int i, j;
@@ -29,38 +31,30 @@ void Setup_ADC(void){
 	Setup_1294_80MHz();
 	Setup_ADC_SS3_CH9(void);
 	Setup_UART0();
-		//Enabling GPIOA[0][1] for UART, PE[4] for ADC
-		//Enable Clock 
-		SYSCTL->RCGCGPIO |= (1<<0);
-		while((SYSCTL->PRGPIO & (1<<0)) != (1<<0)){} // Clock Stabilize
-		// Enable Analog 
-		GPIOE->AMSEL |= (1<<4);
-		//Conig PCTL to select GPIO???
-		GPIOA->PCTL |= 0x00000011;
-		GPIOE->PCTL |= 0x00000011;
-		//enable AFSEL bits to 1 for Port A[1,0] and PortE[4]
-		GPIOA->AFSEL |= ((1<<0) | (1<<1)); 
-		GPIOE->AFSEL |= (1<<4);
+		//Enabling GPIOD[7] for ADC
+		SYSCTL->RCGCGPIO |= (1<<3); //Port (A = 0, B=1, C = 2, D = 3) 		//Enable Clock 
+		while((SYSCTL->PRGPIO & (1<<3)) != (1<<3)){} // Clock Stabilize
+		GPIOD->AMSEL |= (1<<7); 		// Enable Analog 
+		GPIOD->AFSEL |= (1<<7);   		 //enable AFSEL bits to 1 for Port A[1,0] and PortE[4]
+		GPIOD->DEN &=~ (1<<7);
+		GPIOD->PUE |= (1<<7); //might or might not be necessary 
 		
-		//Set DIR to 0 for input, 1 for output 
-		GPIOA->DIR |=
+		// Enable the ADC clock - want to turn on ADC 0 
+		SYSCTTL->RCGCADC |= (1<<0);
+		while((SYSCTL->PRADC & (1<<0) != (1<<0)){};
+		ADC0->PC = (0x01); // How fast you sample, data taking in, 0x01 = 125 ksps, 0x03 = 250ksps, 
+		ADC0->SSPRI = 0x0123;   // Priority, Sample Sequencer, 0 first, 1 second, 2 third and 3, How many channels we using?
+					//If one sequenver no need for priority, if more than one sequencer set 
+					// Sample Sequencer 2 is turned on by the ACTSS portion
+		ADC0->ACTSS &=~ (1<<2); //   Deactivating sample sequencer 2
+		ADC0->EMUX &=~ (0x0F00); // Setting the trigger event for the software, manually or timer sampling
+					 // Clearing Sample Sequencer 2
+		ADC0->SSMUX0 = (0x04); //GPIO Pin channel 4 (based on the @@@)
+		ADC0->SSCTL2 = (0x06); // Enables interrupts and turns on the sequence (for one channel) 
+		ADC0->ACTSS |= (1<<2);
 		
-		//Set PUE bits to 1 to enable internal pull-up
 		
-		//Set DEN bits to 1 to enable digital data pins, write 0 to disable digital function 
-		
-		
-		
-		/*
-		GPIOA->DEN |= ( (1<<0) | (1<<1) ) ;
-		GPIOA->AFSEL |= ( (1<<0) | (1<<1) ) ;
-		GPIOA->PCTL |= 0x00000011 ;
-		*/
 
-	// Configure Pins PA0 and PA1
-	GPIOA->DEN |= ( (1<<0) | (1<<1) ) ;
-	GPIOA->AFSEL |= ( (1<<0) | (1<<1) ) ;
-	GPIOA->PCTL |= 0x00000011 ;
 		
 	
 	
@@ -145,6 +139,24 @@ int main()
  
     while(1) {
         // Place your application code here
+	
+	\*
+	
+			*/
+		//Runs Sampling
+		//Put in main function
+		//ADC0->PSSI |= (1<<2) //for sequencer2
+		//while ((ADC0->RIS & (1<<2)) != (1<<2)) {}
+			
+		
+		
+		for(int i =0; i<1500; i++){};
+		voltage = ADC0->SSFIF02 & 0xFFF; //read 12-bit result
+		
+		
+		ADC0 ->ISC = (0x100);           //Finished looking at sample, get a new one 
+		
+		*/
   
     }
 }
