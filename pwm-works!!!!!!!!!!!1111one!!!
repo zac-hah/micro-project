@@ -26,6 +26,30 @@ void DelayMS(int z){
 }
 
 /*
+	//Port A pin 0 
+void Setup_I2C(void){
+	//Configure GPIO Module
+	SYSCTL->RCGCGPIO |= (1<<0);
+	while((SYSCTL ->PRGPIO & (1<<0)) != (1<<0)) {}
+	GPIOA->DEN |= (1<<0);
+	GPIOA->AFSEL |= (1<<0);
+	GPIOA->PCTL |= (1<<0);
+	GPIOA->ODR |= (1<<0);
+	
+	//Configure I2C Module 
+	SYSCTL->RCGCI2C |= (); //
+	while((SYSCTL ->PRI2C & ()) != ()){}
+	I2C0->MCR |= ();
+	I2C0->MTPR |= ():
+	
+	
+
+}
+
+*/
+
+
+/*
 void Setup_ADC(void){
 	Setup_1294_80MHz();
 	Setup_ADC_SS3_CH9(void);
@@ -55,9 +79,10 @@ void Setup_ADC(void){
 }
 */
 
+*/
 void Setup_UART0(void){
 }
-
+*/
 
 
 void Setup_PWM(void)
@@ -105,15 +130,13 @@ void Setup_GPIO(void)
 		//GPIOF_AHB->PDR |= 1<<0;
 		// 8. Set Digital ENable register on all GPIO pins (GPIO->DEN 0=disable, 1=enable)
 		GPIOF_AHB->DEN |= 1<<0;
-		
-
 }
 
 int main()
 {
     Setup_PWM();
     Setup_GPIO();
-    Setup_ADC();
+   // Setup_ADC();
  
     while(1) {
         // Place your application code here
