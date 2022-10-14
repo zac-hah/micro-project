@@ -8,7 +8,7 @@
   
 void Setup_PWM(void);
 void Setup_GPIO(void);
-//void Setup_ADC(void);
+void Setup_ADC(void);
 //void Setup_ADC_SS3_CH9();
 //void Setup_UART0(void);
 //void Setup_1294_80MHz(); // Setup SystemClock to 80MHz 
