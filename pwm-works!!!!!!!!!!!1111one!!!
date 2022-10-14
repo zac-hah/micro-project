@@ -12,6 +12,7 @@ void Setup_ADC(void);
 //void Setup_ADC_SS3_CH9();
 //void Setup_UART0(void);
 //void Setup_1294_80MHz(); // Setup SystemClock to 80MHz 
+//void Setup_SSI(void);
 
 
 uint16_t voltage = 0; //voltage we set the sampling at 
@@ -25,26 +26,17 @@ void DelayMS(int z){
 	}
 }
 
-/*
-	//Port A pin 0 
-void Setup_I2C(void){
-	//Configure GPIO Module
+\*
+void Setup_SSI(void){
+	//GPIO configuration
+	//PA5
 	SYSCTL->RCGCGPIO |= (1<<0);
-	while((SYSCTL ->PRGPIO & (1<<0)) != (1<<0)) {}
-	GPIOA->DEN |= (1<<0);
-	GPIOA->AFSEL |= (1<<0);
-	GPIOA->PCTL |= (1<<0);
-	GPIOA->ODR |= (1<<0);
-	
-	//Configure I2C Module 
-	SYSCTL->RCGCI2C |= (); //
-	while((SYSCTL ->PRI2C & ()) != ()){}
-	I2C0->MCR |= ();
-	I2C0->MTPR |= ():
-	
+	while((SYSCTL->PRGPIO & (1<<0)) != (1<<0){};
+	GPIOA->DIR |= (1<<5);
 	
 
 }
+
 
 */
 
