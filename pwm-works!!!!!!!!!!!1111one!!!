@@ -55,7 +55,7 @@ void Setup_ADC(void){
 		GPIOD->PUE |= (1<<7); //might or might not be necessary 
 		
 		// Enable the ADC clock - want to turn on ADC 0 
-		SYSCTTL->RCGCADC |= (1<<0);
+		SYSCTL->RCGCADC |= (1<<0);
 		while((SYSCTL->PRADC & (1<<0) != (1<<0)){};
 		ADC0->PC = (0x01); // How fast you sample, data taking in, 0x01 = 125 ksps, 0x03 = 250ksps, 
 		ADC0->SSPRI = 0x0123;   // Priority, Sample Sequencer, 0 first, 1 second, 2 third and 3, How many channels we using?
