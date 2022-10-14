@@ -51,7 +51,7 @@ void Setup_SSI(void){
 	SSI0_CR0_R = (SSI0_CR0_R&~SSI_CR0_DSS_M)+SSI_CR0_DSS_8;// 8-bit data
 	SSI0_CR1_R |= SSI_CR1_SSE; // enable SSI
 }
-
+*/
 }
 #define SSI_SR_RNE 0x00000004 // SSI Receive FIFO Not Empty
 #define SSI_SR_TFE 0x00000001 // SSI Transmit FIFO Empty
@@ -81,10 +81,6 @@ data += sendAfterWaiting(0); // lsbyte of ADC
 GPIO_PORTA3 = 0x08; // !CS = 1
 return data>>3; // right justify
 }
-
-
-*/
-
 
 /*
 void Setup_ADC(void){
@@ -116,7 +112,7 @@ void Setup_ADC(void){
 }
 */
 
-*/
+/*
 void Setup_UART0(void){
 }
 */
@@ -178,7 +174,7 @@ int main()
     while(1) {
         // Place your application code here
 	
-	`	\*
+		/*
 		//Runs Sampling
 		//ADC0->PSSI |= (1<<2) //for sequencer2
 		//while ((ADC0->RIS & (1<<2)) != (1<<2)) {}
