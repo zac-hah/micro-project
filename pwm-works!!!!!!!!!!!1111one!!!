@@ -25,7 +25,6 @@ void DelayMS(int z){
 	}
 }
 
-
 /*
 void Setup_ADC(void){
 	Setup_1294_80MHz();
@@ -52,35 +51,13 @@ void Setup_ADC(void){
 		ADC0->SSMUX0 = (0x04); //GPIO Pin channel 4 (based on the @@@)
 		ADC0->SSCTL2 = (0x06); // Enables interrupts and turns on the sequence (for one channel) 
 		ADC0->ACTSS |= (1<<2);
-		
-		
-
-		
-	
-	
-	sprintf(str, "EE-3450: ADC Test \n\r");
-	UART_PrintString(str);
-	while(1){
-		// Initiate SS3
-		ADC0->PSSI = (1<<8);
-		DelayMs(100);
-		// Waiting for conversion done
-		while ((ADC0->RIS & (1<<8) != (1<<8)){};
-		result = ADC0->SSFIF03 & oxFFF; //read 12-bit result
-		ADC0->ISC = (1<<8);  // Acknowledge Completion
-		sprintf(str, "ADC result = %d \n\r", result);
-		UART_PrintString(str);
-		DelayMs(100);
 	}
-	
 }
 */
 
 void Setup_UART0(void){
-
 }
 
-void Setup_ADC_SS3_CH9();
 
 
 void Setup_PWM(void)
@@ -136,27 +113,18 @@ int main()
 {
     Setup_PWM();
     Setup_GPIO();
+    Setup_ADC();
  
     while(1) {
         // Place your application code here
 	
-	\*
-	
-			*/
+	`	\*
 		//Runs Sampling
-		//Put in main function
 		//ADC0->PSSI |= (1<<2) //for sequencer2
 		//while ((ADC0->RIS & (1<<2)) != (1<<2)) {}
-			
-		
-		
 		for(int i =0; i<1500; i++){};
 		voltage = ADC0->SSFIF02 & 0xFFF; //read 12-bit result
-		
-		
 		ADC0 ->ISC = (0x100);           //Finished looking at sample, get a new one 
-		
 		*/
-  
     }
 }
